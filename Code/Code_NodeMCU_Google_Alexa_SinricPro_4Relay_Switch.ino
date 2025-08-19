@@ -11,121 +11,114 @@
 
 #include <map>
 
+//Edit here
 #define WIFI_SSID         "************"     //Add your Wi-Fi name here   
 #define WIFI_PASS         "************"     //Add your Wi-Fi password here   
-#define APP_KEY           "124ec013-088b-4669-8740-6bd011283e3b"     //Add your APP_KEY here   
-#define APP_SECRET        "bdc39512-aa81-4cf1-a0d8-1b1acc2245bd-f4324526-a2dd-4f50-a6ce-50b6b39f87b1"     //Add your APP_SECRET here   
+#define APP_KEY           "*************************************************************************"     //Add your APP_KEY here   
+#define APP_SECRET        "*************************************************************************"     //Add your APP_SECRET here   
 
-//Enter the device IDs here
+//Edit here
 #define device_ID_1   "************************"     //Add your device_ID_1 here   
 #define device_ID_2   "************************"     //Add your device_ID_2 here    
 #define device_ID_3   "************************"     //Add your device_ID_3 here   
 #define device_ID_4   "************************"     //Add your device_ID_4 here   
 
-// define the GPIO connected with Relays and switches
+// define pins
 #define RelayPin1 5  //D1 of ESP
 #define RelayPin2 4  //D2 of ESP
 #define RelayPin3 14 //D5 of ESP
 #define RelayPin4 12 //D6 of ESP
 
-#define SwitchPin1 10  //SD3 
-#define SwitchPin2 0   //D3 
-#define SwitchPin3 13  //D7
-#define SwitchPin4 3   //RX
+#define SwitchPin1 10  //SD3 of ESP 
+#define SwitchPin2 0   //D3 of ESP 
+#define SwitchPin3 13  //D7 of ESP
+#define SwitchPin4 3   //RX of ESP
 
-#define wifiLed   16   //D0
-
-// comment the following line if you use a toggle switches instead of tactile buttons
-//#define TACTILE_BUTTON 1
+#define wifiLed   16   //D0 of ESP
 
 #define BAUD_RATE   9600
 
 #define DEBOUNCE_TIME 250
 
-typedef struct {      // struct for the std::map below
+typedef struct {      
   int relayPIN;
   int flipSwitchPIN;
 } deviceConfig_t;
 
 
-// this is the main configuration
-// please put in your deviceId, the PIN for Relay and PIN for flipSwitch
-// this can be up to N devices...depending on how much pin's available on your device ;)
-// right now we have 4 devicesIds going to 4 relays and 4 flip switches to switch the relay manually
+
 std::map<String, deviceConfig_t> devices = {
-    //{deviceId, {relayPIN,  flipSwitchPIN}}
     {device_ID_1, {  RelayPin1, SwitchPin1 }},
     {device_ID_2, {  RelayPin2, SwitchPin2 }},
     {device_ID_3, {  RelayPin3, SwitchPin3 }},
     {device_ID_4, {  RelayPin4, SwitchPin4 }}     
 };
 
-typedef struct {      // struct for the std::map below
+typedef struct {     
   String deviceId;
   bool lastFlipSwitchState;
   unsigned long lastFlipSwitchChange;
 } flipSwitchConfig_t;
 
-std::map<int, flipSwitchConfig_t> flipSwitches;    // this map is used to map flipSwitch PINs to deviceId and handling debounce and last flipSwitch state checks
-                                                  // it will be setup in "setupFlipSwitches" function, using informations from devices map
-
+std::map<int, flipSwitchConfig_t> flipSwitches;    
+                                                 
 void setupRelays() { 
-  for (auto &device : devices) {           // for each device (relay, flipSwitch combination)
-    int relayPIN = device.second.relayPIN; // get the relay pin
-    pinMode(relayPIN, OUTPUT);             // set relay pin to OUTPUT
+  for (auto &device : devices) {           
+    int relayPIN = device.second.relayPIN; 
+    pinMode(relayPIN, OUTPUT);             
     digitalWrite(relayPIN, HIGH);
   }
 }
 
 void setupFlipSwitches() {
-  for (auto &device : devices)  {                     // for each device (relay / flipSwitch combination)
-    flipSwitchConfig_t flipSwitchConfig;              // create a new flipSwitch configuration
+  for (auto &device : devices)  {                    
+    flipSwitchConfig_t flipSwitchConfig;              
 
-    flipSwitchConfig.deviceId = device.first;         // set the deviceId
-    flipSwitchConfig.lastFlipSwitchChange = 0;        // set debounce time
-    flipSwitchConfig.lastFlipSwitchState = true;     // set lastFlipSwitchState to false (LOW)--
+    flipSwitchConfig.deviceId = device.first;         
+    flipSwitchConfig.lastFlipSwitchChange = 0;      
+    flipSwitchConfig.lastFlipSwitchState = true;     
 
-    int flipSwitchPIN = device.second.flipSwitchPIN;  // get the flipSwitchPIN
+    int flipSwitchPIN = device.second.flipSwitchPIN; 
 
-    flipSwitches[flipSwitchPIN] = flipSwitchConfig;   // save the flipSwitch config to flipSwitches map
-    pinMode(flipSwitchPIN, INPUT_PULLUP);                   // set the flipSwitch pin to INPUT
+    flipSwitches[flipSwitchPIN] = flipSwitchConfig;   
+    pinMode(flipSwitchPIN, INPUT_PULLUP);                 
   }
 }
 
 bool onPowerState(String deviceId, bool &state)
 {
   Serial.printf("%s: %s\r\n", deviceId.c_str(), state ? "on" : "off");
-  int relayPIN = devices[deviceId].relayPIN; // get the relay pin for corresponding device
-  digitalWrite(relayPIN, !state);             // set the new relay state
+  int relayPIN = devices[deviceId].relayPIN; 
+  digitalWrite(relayPIN, !state);            
   return true;
 }
 
 void handleFlipSwitches() {
-  unsigned long actualMillis = millis();                                          // get actual millis
-  for (auto &flipSwitch : flipSwitches) {                                         // for each flipSwitch in flipSwitches map
-    unsigned long lastFlipSwitchChange = flipSwitch.second.lastFlipSwitchChange;  // get the timestamp when flipSwitch was pressed last time (used to debounce / limit events)
+  unsigned long actualMillis = millis();                                         
+  for (auto &flipSwitch : flipSwitches) {                                        
+    unsigned long lastFlipSwitchChange = flipSwitch.second.lastFlipSwitchChange;  
 
-    if (actualMillis - lastFlipSwitchChange > DEBOUNCE_TIME) {                    // if time is > debounce time...
+    if (actualMillis - lastFlipSwitchChange > DEBOUNCE_TIME) {                    
 
-      int flipSwitchPIN = flipSwitch.first;                                       // get the flipSwitch pin from configuration
-      bool lastFlipSwitchState = flipSwitch.second.lastFlipSwitchState;           // get the lastFlipSwitchState
-      bool flipSwitchState = digitalRead(flipSwitchPIN);                          // read the current flipSwitch state
-      if (flipSwitchState != lastFlipSwitchState) {                               // if the flipSwitchState has changed...
+      int flipSwitchPIN = flipSwitch.first;                                       
+      bool lastFlipSwitchState = flipSwitch.second.lastFlipSwitchState;          
+      bool flipSwitchState = digitalRead(flipSwitchPIN);                         
+      if (flipSwitchState != lastFlipSwitchState) {                               
 #ifdef TACTILE_BUTTON
-        if (flipSwitchState) {                                                    // if the tactile button is pressed 
+        if (flipSwitchState) {                                                   
 #endif      
-          flipSwitch.second.lastFlipSwitchChange = actualMillis;                  // update lastFlipSwitchChange time
-          String deviceId = flipSwitch.second.deviceId;                           // get the deviceId from config
-          int relayPIN = devices[deviceId].relayPIN;                              // get the relayPIN from config
-          bool newRelayState = !digitalRead(relayPIN);                            // set the new relay State
-          digitalWrite(relayPIN, newRelayState);                                  // set the trelay to the new state
+          flipSwitch.second.lastFlipSwitchChange = actualMillis;                 
+          String deviceId = flipSwitch.second.deviceId;                          
+          int relayPIN = devices[deviceId].relayPIN;                            
+          bool newRelayState = !digitalRead(relayPIN);                           
+          digitalWrite(relayPIN, newRelayState);                                  
 
-          SinricProSwitch &mySwitch = SinricPro[deviceId];                        // get Switch device from SinricPro
-          mySwitch.sendPowerStateEvent(!newRelayState);                            // send the event
+          SinricProSwitch &mySwitch = SinricPro[deviceId];                      
+          mySwitch.sendPowerStateEvent(!newRelayState);                          
 #ifdef TACTILE_BUTTON
         }
 #endif      
-        flipSwitch.second.lastFlipSwitchState = flipSwitchState;                  // update lastFlipSwitchState
+        flipSwitch.second.lastFlipSwitchState = flipSwitchState;                
       }
     }
   }
@@ -176,5 +169,6 @@ void loop()
   SinricPro.handle();
   handleFlipSwitches();
 }
+
 
 
