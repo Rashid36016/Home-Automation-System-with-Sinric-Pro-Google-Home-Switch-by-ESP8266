@@ -17,10 +17,10 @@
 #define APP_SECRET        "bdc39512-aa81-4cf1-a0d8-1b1acc2245bd-f4324526-a2dd-4f50-a6ce-50b6b39f87b1"     //Add your APP_SECRET here   
 
 //Enter the device IDs here
-#define device_ID_1   "xxxxxxxxxxxxxxxxxxxxxxxx"     //Add your device_ID_1 here   
-#define device_ID_2   "68a44b3a555f0cd05cf3b636"     //Add your device_ID_2 here    
-#define device_ID_3   "68a44b5548401f2924562e15"     //Add your device_ID_3 here   
-#define device_ID_4   "68a44916169e126f9f55cd2c"     //Add your device_ID_4 here   
+#define device_ID_1   "************************"     //Add your device_ID_1 here   
+#define device_ID_2   "************************"     //Add your device_ID_2 here    
+#define device_ID_3   "************************"     //Add your device_ID_3 here   
+#define device_ID_4   "************************"     //Add your device_ID_4 here   
 
 // define the GPIO connected with Relays and switches
 #define RelayPin1 5  //D1 of ESP
@@ -176,4 +176,5 @@ void loop()
   SinricPro.handle();
   handleFlipSwitches();
 }
+
 
