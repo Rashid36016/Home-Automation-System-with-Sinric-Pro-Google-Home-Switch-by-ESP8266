@@ -11,16 +11,16 @@
 
 #include <map>
 
-#define WIFI_SSID         "Legacy Room"    
-#define WIFI_PASS         "202336018"
-#define APP_KEY           "124ec013-088b-4669-8740-6bd011283e3b"      // Should look like "de0bxxxx-1x3x-4x3x-ax2x-5dabxxxxxxxx"
-#define APP_SECRET        "bdc39512-aa81-4cf1-a0d8-1b1acc2245bd-f4324526-a2dd-4f50-a6ce-50b6b39f87b1"   // Should look like "5f36xxxx-x3x7-4x3x-xexe-e86724a9xxxx-4c4axxxx-3x3x-x5xe-x9x3-333d65xxxxxx"
+#define WIFI_SSID         "************"     //Add your Wi-Fi name here   
+#define WIFI_PASS         "************"     //Add your Wi-Fi password here   
+#define APP_KEY           "124ec013-088b-4669-8740-6bd011283e3b"     //Add your APP_KEY here   
+#define APP_SECRET        "bdc39512-aa81-4cf1-a0d8-1b1acc2245bd-f4324526-a2dd-4f50-a6ce-50b6b39f87b1"     //Add your APP_SECRET here   
 
 //Enter the device IDs here
-#define device_ID_1   "xxxxxxxxxxxxxxxxxxxxxxxx"
-#define device_ID_2   "68a44b3a555f0cd05cf3b636"
-#define device_ID_3   "68a44b5548401f2924562e15"
-#define device_ID_4   "68a44916169e126f9f55cd2c"
+#define device_ID_1   "xxxxxxxxxxxxxxxxxxxxxxxx"     //Add your device_ID_1 here   
+#define device_ID_2   "68a44b3a555f0cd05cf3b636"     //Add your device_ID_2 here    
+#define device_ID_3   "68a44b5548401f2924562e15"     //Add your device_ID_3 here   
+#define device_ID_4   "68a44916169e126f9f55cd2c"     //Add your device_ID_4 here   
 
 // define the GPIO connected with Relays and switches
 #define RelayPin1 5  //D1 of ESP
@@ -176,3 +176,4 @@ void loop()
   SinricPro.handle();
   handleFlipSwitches();
 }
+
